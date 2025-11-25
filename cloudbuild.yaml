@@ -2,33 +2,33 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
+  # Build Docker image
   - name: gcr.io/cloud-builders/docker
     args:
       [
         "build",
         "-t",
-        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app",
+        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest",
         "."
       ]
 
+  # Push Docker image to Artifact Registry
   - name: gcr.io/cloud-builders/docker
     args:
       [
         "push",
-        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app"
+        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
       ]
 
+  # Apply Kubernetes manifests
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    entrypoint: gcloud
+    entrypoint: bash
     args:
-      [
-        "run", "deploy", "flask-sample-service",
-        "--image",
-        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app",
-        "--region", "europe-central2",
-        "--platform", "managed",
-        "--allow-unauthenticated"
-      ]
+      - "-c"
+      - |
+        gcloud container clusters get-credentials cluster-1 --region us-central1 --project skillsoft-1744084570602
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
 
 images:
-  - "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app"
+  - "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
