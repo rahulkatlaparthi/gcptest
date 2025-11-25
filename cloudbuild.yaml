@@ -2,17 +2,16 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  # Build Docker image
+  # 1️⃣ Build Docker image
   - name: gcr.io/cloud-builders/docker
     args:
       [
         "build",
-        "-t",
-        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest",
+        "-t", "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest",
         "."
       ]
 
-  # Push Docker image to Artifact Registry
+  # 2️⃣ Push Docker image to Artifact Registry
   - name: gcr.io/cloud-builders/docker
     args:
       [
@@ -20,15 +19,16 @@ steps:
         "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
       ]
 
-  # Deploy to GKE
+  # 3️⃣ Create Cloud Deploy Release
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    entrypoint: bash
+    entrypoint: gcloud
     args:
-      - "-c"
-      - |
-        gcloud container clusters get-credentials cluster-1 --region us-central1 --project skillsoft-1744084570602 && \
-        kubectl apply -f deployment.yaml && \
-        kubectl apply -f service.yaml
+      [
+        "deploy", "releases", "create", "rel-$(date +%Y%m%d-%H%M%S)",
+        "--delivery-pipeline", "demo-buskwio",
+        "--region", "us-central1",
+        "--images", "flask-app=europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
+      ]
 
 images:
   - "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
