@@ -19,16 +19,16 @@ steps:
         "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
       ]
 
-  # 3️⃣ Create Cloud Deploy Release
+  # 3️⃣ Create Cloud Deploy Release (NO substitutions!)
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: bash
     args:
       - "-c"
       - |
-        RELEASE="rel-$(date +%Y%m%d-%H%M%S)"
-        echo "Creating release: $RELEASE"
+        RELEASE_NAME="rel-$(date +%Y%m%d-%H%M%S)"
+        echo "Creating Cloud Deploy release: $RELEASE_NAME"
 
-        gcloud deploy releases create "$RELEASE" \
+        gcloud deploy releases create "$RELEASE_NAME" \
           --delivery-pipeline=demo-buskwio \
           --region=us-central1 \
           --images=flask-app=europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest
