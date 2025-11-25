@@ -24,7 +24,7 @@ steps:
     entrypoint: gcloud
     args:
       [
-        "deploy", "releases", "create", "rel-fixed-001",
+        "deploy", "releases", "create", "rel-fixed-002",
         "--delivery-pipeline", "demo-buskwio",
         "--region", "us-central1",
         "--images", "flask-app=europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
