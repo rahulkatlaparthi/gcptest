@@ -1,0 +1,38 @@
+steps:
+  # Step 1: Build Docker image
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "build",
+        "-t",
+        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app",
+        "."
+      ]
+
+  # Step 2: Push image to Artifact Registry
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "push",
+        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app"
+      ]
+
+  # Step 3: Deploy to Cloud Run
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      [
+        "run",
+        "deploy",
+        "flask-sample-service",   # <-- change service name if needed
+        "--image",
+        "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app",
+        "--region",
+        "europe-central2",
+        "--platform",
+        "managed",
+        "--allow-unauthenticated"
+      ]
+
+images:
+  - "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app"
