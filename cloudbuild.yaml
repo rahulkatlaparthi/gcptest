@@ -2,7 +2,7 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  # Build Docker image
+  # 1️⃣ Build Docker image
   - name: gcr.io/cloud-builders/docker
     args:
       [
@@ -11,7 +11,7 @@ steps:
         "."
       ]
 
-  # Push Docker image
+  # 2️⃣ Push Docker image to Artifact Registry
   - name: gcr.io/cloud-builders/docker
     args:
       [
@@ -19,19 +19,16 @@ steps:
         "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
       ]
 
-  # Create Cloud Deploy Release
+  # 3️⃣ Create Cloud Deploy release with HARD-CODED NAME
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    entrypoint: bash
+    entrypoint: gcloud
     args:
-      - "-c"
-      - |
-        RELEASE="rel-$(date +%Y%m%d-%H%M%S)"
-        echo "Using release: $RELEASE"
-
-        gcloud deploy releases create "$RELEASE" \
-          --delivery-pipeline=demo-buskwio \
-          --region=us-central1 \
-          --images=flask-app=europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest
+      [
+        "deploy", "releases", "create", "rel-fixed-001",
+        "--delivery-pipeline", "demo-buskwio",
+        "--region", "us-central1",
+        "--images", "flask-app=europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
+      ]
 
 images:
   - "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
