@@ -1,0 +1,15 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: flask-app
+
+manifests:
+  rawYaml:
+    - deployment.yaml
+    - service.yaml
+
+deploy:
+  kubectl: {}
+
+images:
+  - name: flask-app
