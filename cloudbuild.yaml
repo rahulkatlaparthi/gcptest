@@ -20,14 +20,14 @@ steps:
         "europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app:latest"
       ]
 
-  # Apply Kubernetes manifests
+  # Deploy to GKE
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: bash
     args:
       - "-c"
       - |
-        gcloud container clusters get-credentials cluster-1 --region us-central1 --project skillsoft-1744084570602
-        kubectl apply -f k8s/deployment.yaml
+        gcloud container clusters get-credentials cluster-1 --region us-central1 --project skillsoft-1744084570602 && \
+        kubectl apply -f k8s/deployment.yaml && \
         kubectl apply -f k8s/service.yaml
 
 images:
