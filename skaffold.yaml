@@ -3,6 +3,10 @@ kind: Config
 metadata:
   name: flask-app
 
+build:
+  artifacts:
+    - image: europe-central2-docker.pkg.dev/skillsoft-1744084570602/sampleimage/flask-app
+
 manifests:
   rawYaml:
     - deployment.yaml
@@ -10,6 +14,3 @@ manifests:
 
 deploy:
   kubectl: {}
-
-images:
-  - name: flask-app
